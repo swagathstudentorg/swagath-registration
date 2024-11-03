@@ -3,7 +3,7 @@ import pandas as pd
 from streamlit_gsheets import GSheetsConnection
 
 # Create a connection object
-conn = st.connection("gsheets", type=GSheetsConnection)
+conn = st.experimental_connection("gsheets", type=GSheetsConnection)
 
 # Define form fields
 st.title("Event Registration")
@@ -35,24 +35,3 @@ if st.button("Submit"):
     df = pd.DataFrame([data])
     conn.append(data=df)
     st.success("Thank you for registering!")
-
-# Fetch data for visualization
-df = conn.read()
-
-# Visualizations
-st.subheader("Registration Insights")
-
-# Are you a student? (Pie chart)
-st.markdown("**Student Status Distribution**")
-student_counts = df['Are you a Student?'].value_counts()
-st.pie_chart(student_counts)
-
-# Home country distribution (Bar chart)
-st.markdown("**Home Country Distribution**")
-country_counts = df['Home Country'].value_counts()
-st.bar_chart(country_counts)
-
-# Ride requirement (Pie chart)
-st.markdown("**Ride Requirement**")
-ride_counts = df['Do you need a ride?'].value_counts()
-st.pie_chart(ride_counts)
