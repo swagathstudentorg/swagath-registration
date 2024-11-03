@@ -5,7 +5,22 @@ from streamlit_gsheets import GSheetsConnection
 # Create a connection object
 conn = st.connection("gsheets", type=GSheetsConnection)
 
-# Define form fields
+# Sidebar content
+st.sidebar.image("swagath_wallpaper3.webp", use_column_width=True)
+st.sidebar.title("Swagath Registrations")
+
+# Fetch and display registration data in the sidebar
+try:
+    registration_data = conn.read(worksheet="Responses")
+    if registration_data.empty:
+        st.sidebar.warning("No registrations found.")
+    else:
+        st.sidebar.subheader("All Registrations")
+        st.sidebar.dataframe(registration_data)
+except Exception as e:
+    st.sidebar.error(f"An error occurred: {e}")
+
+# Main content
 st.title("Event Registration")
 
 email = st.text_input("Email")
@@ -47,18 +62,3 @@ if st.button("Submit"):
     conn.update(worksheet="Responses", data=updated_df)
 
     st.success("Thank you for registering!")
-
-# Button to fetch and display registration data
-if st.button("View All Registrations"):
-    try:
-        # Read data from the specified worksheet
-        registration_data = conn.read(worksheet="Responses")
-        
-        # Check if the DataFrame is empty
-        if registration_data.empty:
-            st.warning("No registrations found.")
-        else:
-            st.subheader("All Registrations")
-            st.dataframe(registration_data)
-    except Exception as e:
-        st.error(f"An error occurred: {e}")
