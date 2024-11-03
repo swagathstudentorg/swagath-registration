@@ -20,8 +20,8 @@ comments = st.text_area("Comments")
 
 # Form submission
 if st.button("Submit"):
-    # Structure data
-    data = {
+    # Structure new data
+    new_data = {
         "Email": email,
         "Full Name": full_name,
         "Mobile Number": mobile_no,
@@ -32,6 +32,18 @@ if st.button("Submit"):
         "Special needs / prayer requests": special_needs,
         "Comments": comments,
     }
-    df = pd.DataFrame([data])
-    conn.append(data=df)
+    new_df = pd.DataFrame([new_data])
+
+    # Read existing data
+    try:
+        existing_df = conn.read()
+        # Append new data to existing data
+        updated_df = pd.concat([existing_df, new_df], ignore_index=True)
+    except Exception as e:
+        # If reading fails (e.g., sheet is empty), use new data as the updated data
+        updated_df = new_df
+
+    # Update the Google Sheet with the combined data
+    conn.update(data=updated_df)
+
     st.success("Thank you for registering!")
