@@ -36,7 +36,7 @@ if st.button("Submit"):
 
     # Read existing data
     try:
-        existing_df = conn.read()
+        existing_df = conn.read(worksheet="Responses")
         # Append new data to existing data
         updated_df = pd.concat([existing_df, new_df], ignore_index=True)
     except Exception as e:
@@ -44,6 +44,21 @@ if st.button("Submit"):
         updated_df = new_df
 
     # Update the Google Sheet with the combined data
-    conn.update(data=updated_df)
+    conn.update(worksheet="Responses", data=updated_df)
 
     st.success("Thank you for registering!")
+
+# Button to fetch and display registration data
+if st.button("View All Registrations"):
+    try:
+        # Read data from the specified worksheet
+        registration_data = conn.read(worksheet="Responses")
+        
+        # Check if the DataFrame is empty
+        if registration_data.empty:
+            st.warning("No registrations found.")
+        else:
+            st.subheader("All Registrations")
+            st.dataframe(registration_data)
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
